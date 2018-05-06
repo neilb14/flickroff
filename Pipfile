@@ -5,6 +5,8 @@ name = "pypi"
 
 [packages]
 requests = "*"
+flickr-api = "*"
+pyyaml = "*"
 
 [dev-packages]
 
