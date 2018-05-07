@@ -2,6 +2,7 @@
 import os,sys,yaml,argparse,time
 import flickr_api
 import flickr_api as Flickr
+import logging
 from flickr_api.flickrerrors import FlickrError, FlickrAPIError
 from dateutil import parser
 
@@ -19,14 +20,14 @@ def sanitize_filepath(fname):
         ret = ret.replace(os.path.altsep, '_')
     return ret
 
-def get_full_path(pset, photo):
+def get_full_path(path, pset, photo):
     """
     Assemble a full path from the photoset and photo titles
     @param pset: str, photo set name
     @param photo: str, photo name
     @return: str, full sanitized path
     """
-    return os.path.join(sanitize_filepath(pset), sanitize_filepath(photo))
+    return os.path.join(path, sanitize_filepath(pset), sanitize_filepath(photo))
 
 def get_photo_page(photo_info):
     """
@@ -38,6 +39,10 @@ def get_photo_page(photo_info):
             if url.get('type') == 'photopage':
                 ret = url.get('text')
     return ret
+
+def ensure_dir_exists(path):
+    if not os.path.exists(path):
+        os.mkdir(path)
 
 def configure():
     filename = os.path.expanduser(KEY_FILE)
@@ -52,8 +57,8 @@ def list_sets():
     for photo in photosets:
         print('{0} - {1}'.format(photo.id, photo.title))
 
-def download_set(set_id):
-    print('Downloading Set: {}'.format(set_id))
+def download_set(set_id, path):
+    print('Downloading Set: {} into {}'.format(set_id, path))
     pset = Flickr.Photoset(id=set_id)
     photos = pset.getPhotos()
     pagenum = 2
@@ -69,15 +74,13 @@ def download_set(set_id):
                 break
             raise
     dirname = pset.title.replace(os.sep, "_")
-    if not os.path.exists(dirname):
-        os.mkdir(dirname)
+    ensure_dir_exists(os.path.join(path,dirname))
 
     for photo in photos:
-        download_photo(dirname, pset, photo)
+        download_photo(path, dirname, pset, photo)
 
-def download_photo(dirname, pset, photo):
-    fname = get_full_path(dirname, photo.id)
-    print('Downloading Photo: {}'.format(fname))
+def download_photo(path, dirname, pset, photo):
+    fname = get_full_path(path, dirname, photo.id)
     pInfo = photo.getInfo()
     
     photo_size_label = None
@@ -100,10 +103,10 @@ def download_photo(dirname, pset, photo):
     
     try:
         photo.save(fname, photo_size_label)
-    except(IOError, ex):
+    except IOError as ex:
         logging.warning('IO error saving photo: {}'.format(ex.strerror))
         return
-    except(FlickrError, ex):
+    except FlickrError as ex:
         logging.warning('Flickr error saving photo: {}'.format(str(ex)))
         return
 
@@ -132,13 +135,15 @@ def main():
     )
     parser.add_argument('-l', '--list', action='store_true', help='List sets')
     parser.add_argument('-d', '--download', type=str, metavar='SET_ID', help='Download the given set')
+    parser.add_argument('-p', '--path', type=str, metavar='PATH', default='downloads', help='Path to download images into')
     args = parser.parse_args()
     configure()
     if(args.list):
         list_sets()
         return 0
     if(args.download):
-        download_set(args.download)
+        ensure_dir_exists(args.path)
+        download_set(args.download, args.path)
         return -1
     print('ERROR: Must pass either --list or --download\n', file=sys.stderr)
     parser.print_help()
