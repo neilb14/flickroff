@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "028312182db0b509dd6c1a1c4eae3f9113aba53ee5b7c93f290653e5a0bc6e8a"
+            "sha256": "a9bca04c8cb4ecc50ebbffacfe1c206d8af35e93f902dd7e42eedde9ec0f0f56"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -38,32 +38,12 @@
             ],
             "version": "==3.0.4"
         },
-        "flickr-api": {
-            "hashes": [
-                "sha256:57ba6845ad891f32144791d9be1e44a9d76afe9b8e32f1034b956dd38718aa79"
-            ],
-            "index": "pypi",
-            "version": "==0.6.1"
-        },
-        "httplib2": {
-            "hashes": [
-                "sha256:e71daed9a0e6373642db61166fa70beecc9bf04383477f84671348c02a04cbdf"
-            ],
-            "version": "==0.11.3"
-        },
         "idna": {
             "hashes": [
                 "sha256:2c6a5de3089009e3da7c5dde64a141dbc8551d5b7f6cf4ed7c2568d0cc520a8f",
                 "sha256:8c7309c718f94b3a625cb648ace320157ad16ff131ae0af362c9f21b80ef6ec4"
             ],
             "version": "==2.6"
-        },
-        "oauth2": {
-            "hashes": [
-                "sha256:15b5c42301f46dd63113f1214b0d81a8b16254f65a86d3c32a1b52297f3266e6",
-                "sha256:c006a85e7c60107c7cc6da1b184b5c719f6dd7202098196dfa6e55df669b59bf"
-            ],
-            "version": "==1.9.0.post1"
         },
         "python-dateutil": {
             "hashes": [
