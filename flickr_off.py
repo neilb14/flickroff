@@ -101,8 +101,9 @@ def download_photo(path, dirname, pset, photo):
 
     print('Saving: {} ({})'.format(fname, get_photo_page(pInfo)))
     
+    actual_filename = None
     try:
-        photo.save(fname, photo_size_label)
+        actual_filename = photo.save(fname, photo_size_label)
     except IOError as ex:
         logging.warning('IO error saving photo: {}'.format(ex.strerror))
         return
@@ -113,7 +114,7 @@ def download_photo(path, dirname, pset, photo):
     # Set file times to when the photo was taken
     taken = parser.parse(pInfo['taken'])
     taken_unix = time.mktime(taken.timetuple())
-    os.utime(fname + '.jpg', (taken_unix, taken_unix))
+    os.utime(actual_filename, (taken_unix, taken_unix))
     
 
 def main():
